@@ -1,0 +1,196 @@
+{
+  "name": "multi-llm",
+  "displayName": "Multi LLM",
+  "description": "Use OpenAI-compatible chat endpoints, including DeepSeek, as VS Code language models.",
+  "version": "0.1.0",
+  "publisher": "J-Siu",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/J-Siu/vscode-multi-llm.git"
+  },
+  "homepage": "https://github.com/J-Siu/vscode-multi-llm#readme",
+  "bugs": {
+    "url": "https://github.com/J-Siu/vscode-multi-llm/issues"
+  },
+  "keywords": [
+    "llm",
+    "openai-compatible",
+    "deepseek",
+    "language model",
+    "chat"
+  ],
+  "engines": {
+    "vscode": "^1.104.0"
+  },
+  "categories": [
+    "Machine Learning"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/src/extension.js",
+  "contributes": {
+    "languageModelChatProviders": [
+      {
+        "vendor": "multi-llm",
+        "displayName": "Multi LLM"
+      }
+    ],
+    "commands": [
+      {
+        "command": "multiLlm.setApiKey",
+        "title": "Multi LLM: Set API Key"
+      },
+      {
+        "command": "multiLlm.removeApiKey",
+        "title": "Multi LLM: Remove API Key"
+      },
+      {
+        "command": "multiLlm.configureSources",
+        "title": "Multi LLM: Manage Sources"
+      },
+      {
+        "command": "multiLlm.addEndpoint",
+        "title": "Multi LLM: Add Endpoint"
+      },
+      {
+        "command": "multiLlm.editSource",
+        "title": "Multi LLM: Edit Source"
+      },
+      {
+        "command": "multiLlm.deleteSource",
+        "title": "Multi LLM: Delete Source"
+      },
+      {
+        "command": "multiLlm.refreshModels",
+        "title": "Multi LLM: Refresh Models from All Sources"
+      }
+    ],
+    "configuration": {
+      "title": "Multi LLM",
+      "properties": {
+        "multiLlm.sources": {
+          "type": "array",
+          "default": [],
+          "description": "OpenAI API and OpenAI-compatible sources. Use Multi LLM: Add Endpoint to add a source through the VS Code UI. API keys are stored in VS Code SecretStorage.",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "baseUrl",
+              "models"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9._-]+$",
+                "description": "Stable, unique source ID. Changing it creates a new API-key entry."
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Name shown in the model picker."
+              },
+              "baseUrl": {
+                "type": "string",
+                "format": "uri",
+                "description": "OpenAI-compatible API base URL, such as https://api.openai.com/v1."
+              },
+              "preset": {
+                "type": "string",
+                "enum": [
+                  "deepseek"
+                ],
+                "description": "Optional built-in provider ID. Use \"deepseek\" for DeepSeek-specific request handling, such as thinking mode."
+              },
+              "models": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Model ID sent to the endpoint."
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Optional display name. Defaults to the model ID."
+                    },
+                    "maxInputTokens": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "default": 128000
+                    },
+                    "maxOutputTokens": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "default": 8192
+                    },
+                    "toolCalling": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "autoDetectCapabilities": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "Detect vision and reasoning support from endpoint metadata. Set false to use the explicit per-model capability flags."
+                    },
+                    "imageInput": {
+                      "type": "boolean",
+                      "description": "Vision capability used when autoDetectCapabilities is false."
+                    },
+                    "reasoning": {
+                      "type": "boolean",
+                      "description": "Reasoning capability used when autoDetectCapabilities is false."
+                    },
+                    "capabilityMetadata": {
+                      "type": "object",
+                      "description": "Detected endpoint capabilities. Managed by the extension.",
+                      "properties": {
+                        "imageInput": {
+                          "type": "boolean"
+                        },
+                        "reasoning": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "reasoningEffort": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "low",
+                        "medium",
+                        "high",
+                        "max"
+                      ],
+                      "description": "Optional reasoning_effort value sent to compatible endpoints. DeepSeek uses \"none\" to disable thinking mode."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "npm run compile && node --test dist/test/*.test.js",
+    "package": "npm run compile && npx --yes @vscode/vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/vscode": "^1.104.0",
+    "typescript": "^5.8.3"
+  }
+}
