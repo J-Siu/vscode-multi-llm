@@ -1,2 +1,4 @@
+- v1.0.1
+  - fix: package.json version
 - v1.0.0
   - Feature complete

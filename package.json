@@ -2,7 +2,7 @@
   "name": "multi-llm",
   "displayName": "Multi LLM",
   "description": "Use OpenAI-compatible chat endpoints, including DeepSeek, as VS Code language models.",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "publisher": "J-Siu",
   "license": "MIT",
   "repository": {
